@@ -1,0 +1,4 @@
+# application environments
+.env
+# Node.js packages
+node_modules/
