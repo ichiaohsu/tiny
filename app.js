@@ -142,10 +142,23 @@ app.view("online_update_form", async({ ack, body, view, context }) => {
     const todo = view["state"]["values"]["update-todo"]["update-input-todo"]["value"]; 
     const problems = view["state"]["values"]["update-problems"]["update-input-problems"]["value"]; 
     const user = body["user"]["id"];
+    
+    // grab user info: name & icon
+    try{
+        var user_info = await app.client.users.info({
+            token: context.botToken,
+            user: user
+        });
+    } catch (err) {
+        console.log(err);
+    }
+
     try {
-        app.client.chat.postMessage({
+        const result = await app.client.chat.postMessage({
             token: context.botToken,
             channel: selectedChannel,
+            username: user_info.user.name,
+            icon_url: user_info.user.profile.image_72,
             blocks: [
                 {
                     "type": "section",
@@ -191,6 +204,7 @@ app.view("online_update_form", async({ ack, body, view, context }) => {
                 }
             ]
         });
+        console.log(result);
     } catch (err) {
         console.log(err);
     }
