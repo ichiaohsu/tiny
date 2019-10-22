@@ -30,7 +30,16 @@ app.event('app_home_opened', async ({ event, say }) => {
                         },
                         "style": "primary",
                         "value": "online_update_click",
-                        "action_id": "online_update_click"
+                        "action_id": "online-update-button"
+                    },
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Calendar",
+                            "emoji": true
+                        },
+                        "action_id": "calendar-button" 
                     }
                 ]
             }
@@ -39,7 +48,7 @@ app.event('app_home_opened', async ({ event, say }) => {
 });
 
 // clicking "online update" button in app home
-app.action('online_update_click', ({ body, ack, payload, context }) => {
+app.action("online-update-button", ({ body, ack, payload, context }) => {
     // Acknowledge the action
     ack();
     // Create pop-up conversation
@@ -131,6 +140,89 @@ app.action('online_update_click', ({ body, ack, payload, context }) => {
     } catch (err) {
         console.error(error);
     }
+});
+
+app.action("calendar-button", ({ ack, say }) => {
+    ack();
+    // Create pop-up conversation
+    say({
+        blocks: [
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": "*<https://calendar.google.com/calendar/r|Team Google Calendar>*\nSee important events,\nor mark you *Out of Office* period."
+                },
+                "accessory": {
+                    "type": "image",
+                    "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Google_Calendar.png",
+                    "alt_text": "calendar thumbnail"
+                }
+            },
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "OOO",
+                            "emoji": true
+                        },
+                        "style": "danger",
+                        "action_id": "OOO-button"
+                    }
+                ]
+            }
+        ]
+    });
+});
+
+app.action("OOO-button", ({ body, ack, payload, context, say }) => {
+    ack();
+    var today = new Date();
+    var tomorrow = new Date();
+    tomorrow.setDate(today.getDate()+1);
+    console.log(today.toISOString().slice(0, 10));
+    console.log(tomorrow.toISOString().slice(0, 10))
+    say({
+        blocks: [
+            {
+                "type": "actions",
+                "elements": [
+                    {
+                        "type": "datepicker",
+                        "action_id": "startdate",
+                        "initial_date": today.toISOString().slice(0, 10),
+                        "placeholder": {
+                          "type": "plain_text",
+                          "text": "start date"
+                        }
+                    },
+                    {
+                        "type": "datepicker",
+                        "action_id": "enddate",
+                        "initial_date": tomorrow.toISOString().slice(0, 10),
+                        "placeholder": {
+                          "type": "plain_text",
+                          "text": "end date"
+                        }
+                    },
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "More Time",
+                            "emoji": true
+                        },
+                        "style": "danger",
+                        "action_id": "OOO-button"
+                    }
+                ]
+            }
+        ]
+    });
+
 });
 
 // sending message with online update dialog
