@@ -143,49 +143,142 @@ app.action("online-update-button", ({ body, ack, payload, context }) => {
     }
 });
 
-app.action("calendar-button", ({ ack, say }) => {
+app.action("calendar-button", ({ body, ack, payload, context }) => {
     ack();
     // Create pop-up conversation
-    say({
-        blocks: [
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "*<https://calendar.google.com/calendar/r|Team Google Calendar>*\nSee important events,\nor mark you *Out of Office* period."
+    try {
+        const result = app.client.views.open({
+            token: context.botToken,
+            trigger_id: body.trigger_id,
+            view: {
+                "type": "modal",
+                "callback_id": 'calendar-form',
+                "title": {
+                    "type": "plain_text",
+                    "text": "Create new events in Google Calendar",
+                    "emoji": true
                 },
-                "accessory": {
-                    "type": "image",
-                    "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Google_Calendar.png",
-                    "alt_text": "calendar thumbnail"
-                }
-            },
-            {
-                "type": "actions",
-                "elements": [
+                "submit": {
+                    "type": "plain_text",
+                    "text": "Submit",
+                    "emoji": true
+                },
+                "close": {
+                    "type": "plain_text",
+                    "text": "Cancel",
+                    "emoji": true
+                },
+                "blocks":[
                     {
-                        "type": "button",
+                        "type": "section",
                         "text": {
-                            "type": "plain_text",
-                            "text": "OOO",
-                            "emoji": true
+                            "type": "mrkdwn",
+                            "text": "*<https://calendar.google.com/calendar/r|Team Google Calendar>*\nSee important events,\nor mark you *Out of Office* period."
                         },
-                        "style": "danger",
-                        "action_id": "OOO-button"
-                    }
+                        "accessory": {
+                            "type": "image",
+                            "image_url": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Google_Calendar.png",
+                            "alt_text": "calendar thumbnail"
+                        }
+                    },
+                    {
+                        "type": "section",
+                        "text": {
+                            "type": "mrkdwn",
+                            "text": "Create an event in calendar"
+                        },
+                        "accessory": {
+                            "type": "static_select",
+                            "placeholder": {
+                                "type": "plain_text",
+                                "text": "Select a calendar",
+                                "emoji": true
+                            },
+                            "options": [
+                                {
+                                    "text": {
+                                        "type": "plain_text",
+                                        "text": "Choice 1",
+                                        "emoji": true
+                                    },
+                                    "value": "value-0"
+                                },
+                                {
+                                    "text": {
+                                        "type": "plain_text",
+                                        "text": "Choice 2",
+                                        "emoji": true
+                                    },
+                                    "value": "value-1"
+                                },
+                                {
+                                    "text": {
+                                        "type": "plain_text",
+                                        "text": "Choice 3",
+                                        "emoji": true
+                                    },
+                                    "value": "value-2"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "plain_text_input"
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Event",
+                            "emoji": true
+                        }
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "datepicker",
+                            "initial_date": dayjs().format().slice(0,10),
+                            "placeholder": {
+                                "type": "plain_text",
+                                "text": "Select a date",
+                                "emoji": true
+                            }
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "Start date",
+                            "emoji": true
+                        }
+                    },
+                    {
+                        "type": "input",
+                        "element": {
+                            "type": "datepicker",
+                            "initial_date": dayjs().add(1, "day").format().slice(0,10),
+                            "placeholder": {
+                                "type": "plain_text",
+                                "text": "Select a date",
+                                "emoji": true
+                            }
+                        },
+                        "label": {
+                            "type": "plain_text",
+                            "text": "End date",
+                            "emoji": true
+                        }
+                    } 
                 ]
             }
-        ]
-    });
+        });
+        console.log(result);
+
+    } catch (err) {
+        console.log(err);
+    }
 });
 
 app.action("OOO-button", ({ body, ack, payload, context, say }) => {
     ack();
-    var today = new Date();
-    var tomorrow = new Date();
-    tomorrow.setDate(today.getDate()+1);
-    console.log(today.toISOString().slice(0, 10));
-    console.log(tomorrow.toISOString().slice(0, 10))
     say({
         blocks: [
             {
@@ -208,6 +301,16 @@ app.action("OOO-button", ({ body, ack, payload, context, say }) => {
                           "type": "plain_text",
                           "text": "end date"
                         }
+                    },
+                    {
+                        "type": "button",
+                        "text": {
+                            "type": "plain_text",
+                            "text": "Add",
+                            "emoji": true
+                        },
+                        "style": "primary",
+                        "action_id": "calendar-add"
                     },
                     {
                         "type": "button",

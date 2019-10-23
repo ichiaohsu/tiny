@@ -2,3 +2,5 @@
 .env
 # Node.js packages
 node_modules/
+# credentials
+gcal-credentials.json

@@ -13,6 +13,7 @@
     "dotenv": "^8.2.0"
   },
   "devDependencies": {
-    "dayjs": "^1.8.16"
+    "dayjs": "^1.8.16",
+    "googleapis": "^39.2.0"
   }
 }
