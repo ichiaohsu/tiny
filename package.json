@@ -11,5 +11,8 @@
   "dependencies": {
     "@slack/bolt": "^1.4.0",
     "dotenv": "^8.2.0"
+  },
+  "devDependencies": {
+    "dayjs": "^1.8.16"
   }
 }

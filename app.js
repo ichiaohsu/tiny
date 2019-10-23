@@ -1,4 +1,5 @@
 require('dotenv').config();
+const dayjs = require('dayjs');
 
 const { App } = require('@slack/bolt');
 
@@ -193,7 +194,7 @@ app.action("OOO-button", ({ body, ack, payload, context, say }) => {
                     {
                         "type": "datepicker",
                         "action_id": "startdate",
-                        "initial_date": today.toISOString().slice(0, 10),
+                        "initial_date": dayjs().format().slice(0, 10),
                         "placeholder": {
                           "type": "plain_text",
                           "text": "start date"
@@ -202,7 +203,7 @@ app.action("OOO-button", ({ body, ack, payload, context, say }) => {
                     {
                         "type": "datepicker",
                         "action_id": "enddate",
-                        "initial_date": tomorrow.toISOString().slice(0, 10),
+                        "initial_date": dayjs().add(1,"day").format().slice(0, 10),
                         "placeholder": {
                           "type": "plain_text",
                           "text": "end date"
