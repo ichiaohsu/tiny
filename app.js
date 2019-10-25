@@ -115,6 +115,7 @@ onlineUpdateTemplate = (token) => {
                         "multiline": true,
                         "action_id": "update-input-problems"
                     },
+                    "optional": true,
                     "label": {
                         "type": "plain_text",
                         "text": "有沒有遇到哪些困難",
@@ -206,7 +207,7 @@ app.view("online-update-form", async({ ack, body, view, context }) => {
     const selectedThread = view["state"]["values"]["update-thread"]["update-thread-select"]["selected_option"]["value"]
     const done = view["state"]["values"]["update-done"]["update-input-done"]["value"];
     const todo = view["state"]["values"]["update-todo"]["update-input-todo"]["value"]; 
-    const problems = view["state"]["values"]["update-problems"]["update-input-problems"]["value"]; 
+    const problems = view["state"]["values"]["update-problems"]["update-input-problems"]["value"];
     const user = body["user"]["id"];
     // Extract thread_id & channel_id correspondingly
     const [threadID, channelID] = selectedThread.split("#");
@@ -252,27 +253,30 @@ app.view("online-update-form", async({ ack, body, view, context }) => {
                     "type": "mrkdwn",
                     "text": `\`\`\`${todo}\`\`\``
                 }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": "有沒有遇到哪些困難" 
-                }
-            },
-            {
-                "type": "section",
-                "text": {
-                    "type": "mrkdwn",
-                    "text": `\`\`\`${problems}\`\`\``
-                }
             }
         ]
     }
     if (threadID.length > 0) {
         jsonPayload.thread_ts = threadID;
     }
-
+    // attach problem section if not null
+    if (problems) {
+        jsonPayload.blocks.push(
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": "有沒有遇到哪些困難" 
+            }
+        },
+        {
+            "type": "section",
+            "text": {
+                "type": "mrkdwn",
+                "text": `\`\`\`${problems}\`\`\``
+            }
+        });
+    }
     try {
         const result = await app.client.chat.postMessage(jsonPayload);
         console.log(result);
